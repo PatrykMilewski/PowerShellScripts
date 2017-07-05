@@ -3,7 +3,7 @@ Param(
 	[Parameter(Mandatory=$False, Position=1)]
 	 [String]$processName = "splwow64",
 	[Parameter(Mandatory=$False, Position=2)]
-	 [Int64]$maxMemorySize = 20000000,
+	 [Int]$maxMemorySize = 20000000,
 	[Parameter(Mandatory=$False)]
 	 [String]$memberName = "VM",
 	[Parameter(Mandatory=$False)]
@@ -29,18 +29,18 @@ while ($true) {
 		if ($virtualMemory -gt $maxMemorySize) {
 			$process.Kill()
 			$counter = 0
-			echo "Process killed."
-			continue
+			echo ("Process killed with " + $virtualMemory + " VM.")
 		}
 
-		if ($virtualMemory -gt $memoryTreshold) {
+		elseif ($virtualMemory -gt $memoryTreshold) {
 			if ($previousMemory -eq $virtualMemory) {
 				$counter++
 			}
 
 			if ($counter -gt $killCycles) {
 				$process.Kill();
-				echo "Process killed."
+				$counter = 0
+				echo ("Process killed with " + $virtualMemory + " VM.")
 			}
 		}
 		else {
