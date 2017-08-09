@@ -2,7 +2,6 @@
 function Run-Tasks {
     [CmdletBinding()]
     Param(
-         [String]$PSScriptRoot = "C:\Work",
 	     [String]$IniFileLocation = (Join-Path $PSScriptRoot "Run-Tasks.ini"),
          [String]$LogFileName = "Run-Tasks.log",
          [String]$LogFileLocation = (Join-Path $PSScriptRoot $LogFileName)
@@ -17,7 +16,7 @@ function Run-Tasks {
 
             [String]$exeFileLocation
             [String]$arguments
-            [Switch]$runRemotly
+            [Int]$runRemotly
             [String]$remoteTarget
             [String]$stdout = (Join-Path $env:temp ("stdout" + [CustomProcess]::Counter + ".temp"))
             [String]$stderr = (Join-Path $env:temp ("stderr" + [CustomProcess]::Counter + ".temp"))
@@ -32,10 +31,10 @@ function Run-Tasks {
                 $this.exeFileLocation = $exeFileLocation
                 $this.arguments = $arguments
                 if ($runRemotly -like "true") {
-                    $this.runRemotly = $True
+                    $this.runRemotly = 1
                 }
                 else {
-                    $this.runRemotly = $False
+                    $this.runRemotly = 0
                 }
                 $this.remoteTarget = $remoteTarget
             }
@@ -112,10 +111,10 @@ function Run-Tasks {
             }
         }
 
-        function Execute-Command([ScriptBlock]$scriptBlock, [String]$target, [Switch]$runRemotly) {
-            if ($runRemotly -eq $True) {
-                Write-Verbose ("Executing remotly on: " + $this.remoteTarget + " script block: " + $scriptBlock)
-                return (Invoke-Command -ComputerName $this.remoteTarget -ScriptBlock $scriptBlock)                    
+        function Execute-Command([ScriptBlock]$scriptBlock, [String]$remoteTarget, [Int]$runRemotly) {
+            if ($runRemotly -eq 1) {
+                Write-Verbose ("Executing remotly on: " + $remoteTarget + " script block: " + $scriptBlock)
+                return (Invoke-Command -ComputerName $remoteTarget -ScriptBlock $scriptBlock)                    
             }
             else {
                 Write-Verbose ("Executing locally script block: " + $scriptBlock)
