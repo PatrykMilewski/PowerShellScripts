@@ -66,8 +66,6 @@ function Run-Tasks {
             }
 
             [bool]CheckStdout([String]$searchFor) {
-                $var = Execute-Command { Test-Path $this.stdout } $this.remoteTarget $this.runRemotly
-                Write-Verbose $var
                 if ((Execute-Command { Test-Path $this.stdout } $this.remoteTarget $this.runRemotly) -eq $True) {
                     $this.stdoutContent = Execute-Command { Get-Content $this.stdout } $this.remoteTarget $this.runRemotly
                     Write-Verbose ("Standard output content: " + $this.stdoutContent)
